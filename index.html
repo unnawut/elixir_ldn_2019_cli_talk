@@ -47,10 +47,19 @@
           <h2>Hello!</h2>
           <img src="./images/hello-tardigrade.jpg" style="float: left; width: 30%" />
           <ul>
-            <li class="fragment">Maintainer of <a href="https://github.com/unnawut/licensir">licensir</a></li>
-            <li class="fragment">Software Engineer at <a href="https://github.com/omisego">OmiseGO</a></li>
-            <li class="fragment">Both have CLIs!</li>
+            <li>Maintainer of <a href="https://github.com/unnawut/licensir">licensir</a></li>
+            <li>Software Engineer at <a href="https://github.com/omisego">OmiseGO</a></li>
+            <li>Both have CLIs!</li>
           </ul>
+          <aside class="notes">
+            - I'm currently maintaining an ELixir library called Licensir.<br />
+            - Crawls all your mix files and license files -> generates a list of licenses<br />
+            - I'm also a software engineer at OmiseGO, where my responsibility is to build an e-wallet
+            application that facilitates storing and transferring any kind of quantifiable values. <br />
+            - And because it's a decentralized solution, we make this a white-labeled software, where we
+            expect our partners to run them. And hence why CLI is important because it allows people outside
+            the company to setup our solution easily.
+          </aside>
         </section>
 
         <!--
@@ -80,26 +89,10 @@
           WHY CLI?
         --->
         <section>
-          <h2>1. Why CLI?</h2>
-        </section>
-        <section>
-          <img src="./images/mix-mistake-censored-1.jpg" style="max-height: 500px" />
-          <div style="font-size: large">A BBC Micro at the National Museum of Computing, Bletchley Park (<a href="https://twitter.com/tnmoc">@tnmoc</a>)</div>
-        </section>
-        <section>
-          <img src="./images/mix-mistake-censored-2.jpg" style="max-height: 500px" />
-          <div style="font-size: large">A BBC Micro at the National Museum of Computing, Bletchley Park (<a href="https://twitter.com/tnmoc">@tnmoc</a>)</div>
-        </section>
-        <section>
-          <img src="./images/mix-mistake.jpg" style="max-height: 500px" />
-          <div style="font-size: large">A BBC Micro at the National Museum of Computing, Bletchley Park (<a href="https://twitter.com/tnmoc">@tnmoc</a>)</div>
-        </section>
-        <section>
           <h2>Why CLI?</h2>
           <div class="left-column" style="font-size: 80%">
             <ul>
               <li>Light-weight, minimum-viable interface</li>
-              <li style="list-style: none;">&nbsp;</li>
               <li style="list-style: none;">&nbsp;</li>
               <li style="list-style: none;">&nbsp;</li>
               <li style="list-style: none;">&nbsp;</li>
@@ -122,18 +115,20 @@
               <li style="list-style: none;">&nbsp;</li>
               <li style="list-style: none;">&nbsp;</li>
               <li style="list-style: none;">&nbsp;</li>
-              <li style="list-style: none;">&nbsp;</li>
             </ul>
           </div>
           <div class="right-column">
             <img src="./images/ssh.png" style="max-height: 300px" />
-            <ul style="font-size: 50%">
-              <li class="fragment">SSH for secure transport</li>
-              <li class="fragment">OS login for authentication</li>
-              <li class="fragment">User and group permission for authorization</li>
+            <ul class="fragment" style="font-size: 50%">
+              <li>SSH for secure transport</li>
+              <li>OS login for authentication</li>
+              <li>User and group permission for authorization</li>
             </ul>
           </div>
           <aside class="notes">
+            - SSH for secure transport<br />
+            - OS login for authentication<br />
+            - User and group permission for authorization<br />
             No need to re-invent a new wheel
           </aside>
         </section>
@@ -144,7 +139,6 @@
               <li>Light-weight, minimum-viable interface</li>
               <li>Utilizes OS/infra-level features</li>
               <li>Facilitates reproducibility</li>
-              <li style="list-style: none;">&nbsp;</li>
               <li style="list-style: none;">&nbsp;</li>
               <li style="list-style: none;">&nbsp;</li>
             </ul>
@@ -166,32 +160,6 @@
               <li>Light-weight, minimum-viable interface</li>
               <li>Utilizes OS/infra-level features</li>
               <li>Facilitates reproducibility</li>
-              <li>Allows rule enforcements</li>
-              <li style="list-style: none;">&nbsp;</li>
-              <li style="list-style: none;">&nbsp;</li>
-            </ul>
-          </div>
-          <div class="right-column">
-            <pre><code class="lang-yaml">
-  defp do_set_config(key, value) do
-    key
-    |> Config.get_setting()
-    |> case do
-      ^value -> {:unchanged, value}
-      _ -> MySchema.do_update(key, value)
-    end
-  end
-            </code></pre>
-          </div>
-        </section>
-        <section>
-          <h2>Why CLI?</h2>
-          <div class="left-column" style="font-size: 80%">
-            <ul>
-              <li>Light-weight, minimum-viable interface</li>
-              <li>Utilizes OS/infra-level features</li>
-              <li>Facilitates reproducibility</li>
-              <li>Allows rule enforcements</li>
               <li>Increases composability</li>
               <li style="list-style: none;">&nbsp;</li>
             </ul>
@@ -214,7 +182,6 @@
               <li>Light-weight, minimum-viable interface</li>
               <li>Utilizes OS/infra-level features</li>
               <li>Facilitates reproducibility</li>
-              <li>Allows rule enforcements</li>
               <li>Increases composability</li>
               <li>Enables automation</li>
             </ul>
@@ -384,11 +351,11 @@
           </ul>
         </section>
         <section>
-          <h3>stdout vs. stderror</h3>
-          <pre><code class="lang-shell">
+          <h3>stdout vs. stderr</h3>
+          <pre><code class="lang-elixir">
   IO.puts(device \\ :stdio, item)
           </code></pre>
-          <pre><code class="lang-shell">
+          <pre><code class="lang-elixir">
   mix run -e 'IO.puts("info"); IO.puts(:stderr, "error")' 1>/dev/null
   # error
           </code></pre>
@@ -398,12 +365,12 @@
           </ul>
         </section>
         <section>
-          <h3>Use options, not <code>IO.gets/2</code></h3>
+          <h3>Use flags, not <code>IO.gets/2</code></h3>
           <ul>
             <li>CLI interactiveness is about returning promptly</li>
             <li>Input prompts prevent automation</li>
-            <li>Use options for inputs, return error when missing</li>
-            <li>Supports `-y`, `--yes`, `--assume-yes` to bypass all confirmations</li>
+            <li>Use flags for inputs, return error when missing</li>
+            <li>E.g. supports <code>-y</code>, <code>--yes</code>, <code>--assume-yes</code> to bypass all confirmations</li>
           </ul>
           <pre><code class="lang-elixir">
   def assume_yes?(args), do: args in ["-y", "--yes", "--assume-yes"]
@@ -444,6 +411,26 @@
             <li>Elixir core features for CLI apps</li>
             <li>Lessons learnt</li>
           </ol>
+        </section>
+
+        <section>
+          <div class="left-column">
+            <h4>Tools</h4>
+            <ol>
+              <li><code>IO.write/2, IO.puts/2, IO.gets/2</code></li>
+              <li><code>IO.ANSI</code></li>
+              <li><code>OptionParser.parse/2</code></li>
+            </ol>
+          </div>
+          <div class="right-column">
+            <h4 style="text-align: left;">Practices</h4>
+            <ol>
+              <li>Distillery command</li>
+              <li><code>stdout</code> v.s. <code>stderr</code></li>
+              <li>Flags, not <code>IO.gets/2</code></li>
+              <li>Meaningful exit codes</li>
+            </ol>
+          </div>
         </section>
 
         <!--
