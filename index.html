@@ -1,0 +1,497 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Building an interactive CLI app that people will love in Elixir - Unnawut Leepaisalsuwanna</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
+    <link rel="stylesheet" href="css/overrides.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai-sublime.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!--
+          FRONT COVER
+        -->
+        <section>
+          <h2>Building an interactive CLI app that people will love in Elixir</h2>
+          <p></p>
+          <p style="margin-top: 3rem;">
+            <small>Unnawut Leepaisalsuwanna, <a href="https://www.unnawut.com">@unnawut</a><br />
+            Software Engineer at <a href="https://github.com/omisego/">OmiseGO</a></small>
+          </p>
+          <p style="margin-top: 3rem;">
+            <small>July 18<sup>th</sup>, 2019</small><br />
+          </p>
+        </section>
+
+        <!--
+          PROFILE
+        -->
+        <section>
+          <h2>Hello!</h2>
+          <img src="./images/hello-tardigrade.jpg" style="float: left; width: 30%" />
+          <ul>
+            <li class="fragment">Maintainer of <a href="https://github.com/unnawut/licensir">licensir</a></li>
+            <li class="fragment">Software Engineer at <a href="https://github.com/omisego">OmiseGO</a></li>
+            <li class="fragment">Both have CLIs!</li>
+          </ul>
+        </section>
+
+        <!--
+          THESIS STATEMENT AND TALK STRUCTURE
+        -->
+        <section>
+          <p>My claim today...</p>
+          <h4>Command line interfaces should be adopted<br />as a first-class citizen in your Elixir app.</h4>
+          <aside class="notes">
+            Nothing about concurrency or distributed systems. While a topic about CLI may seem trivial,
+            I find adopting a command line interface has been one of the biggest quick wins I can do
+            to my apps and hence I believe it deserves more attention, just from the productivity
+            you would gain from it.
+          </aside>
+        </section>
+
+        <section>
+          <ol>
+            <li>Why CLI?</li>
+            <li>Developer Experience (DX) in CLIs</li>
+            <li>Elixir core features for CLI apps</li>
+            <li>Lessons learnt</li>
+          </ol>
+        </section>
+
+        <!--
+          WHY CLI?
+        --->
+        <section>
+          <h2>1. Why CLI?</h2>
+        </section>
+        <section>
+          <img src="./images/mix-mistake-censored-1.jpg" style="max-height: 500px" />
+          <div style="font-size: large">A BBC Micro at the National Museum of Computing, Bletchley Park (<a href="https://twitter.com/tnmoc">@tnmoc</a>)</div>
+        </section>
+        <section>
+          <img src="./images/mix-mistake-censored-2.jpg" style="max-height: 500px" />
+          <div style="font-size: large">A BBC Micro at the National Museum of Computing, Bletchley Park (<a href="https://twitter.com/tnmoc">@tnmoc</a>)</div>
+        </section>
+        <section>
+          <img src="./images/mix-mistake.jpg" style="max-height: 500px" />
+          <div style="font-size: large">A BBC Micro at the National Museum of Computing, Bletchley Park (<a href="https://twitter.com/tnmoc">@tnmoc</a>)</div>
+        </section>
+        <section>
+          <h2>Why CLI?</h2>
+          <div class="left-column" style="font-size: 80%">
+            <ul>
+              <li>Light-weight, minimum-viable interface</li>
+              <li style="list-style: none;">&nbsp;</li>
+              <li style="list-style: none;">&nbsp;</li>
+              <li style="list-style: none;">&nbsp;</li>
+              <li style="list-style: none;">&nbsp;</li>
+              <li style="list-style: none;">&nbsp;</li>
+            </ul>
+          </div>
+          <div class="right-column">
+            <img src="./images/ssh.png" style="max-height: 300px" />
+          </div>
+          <aside class="notes">
+            - Light-weight: No layouts to calculate, no buttons to render. A perfect minimum-viable interface.
+          </aside>
+        </section>
+        <section>
+          <h2>Why CLI?</h2>
+          <div class="left-column" style="font-size: 80%">
+            <ul>
+              <li>Light-weight, minimum-viable interface</li>
+              <li>Utilizes OS/infra-level features</li>
+              <li style="list-style: none;">&nbsp;</li>
+              <li style="list-style: none;">&nbsp;</li>
+              <li style="list-style: none;">&nbsp;</li>
+              <li style="list-style: none;">&nbsp;</li>
+            </ul>
+          </div>
+          <div class="right-column">
+            <img src="./images/ssh.png" style="max-height: 300px" />
+            <ul style="font-size: 50%">
+              <li class="fragment">SSH for secure transport</li>
+              <li class="fragment">OS login for authentication</li>
+              <li class="fragment">User and group permission for authorization</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            No need to re-invent a new wheel
+          </aside>
+        </section>
+        <section>
+          <h2>Why CLI?</h2>
+          <div class="left-column" style="font-size: 80%">
+            <ul>
+              <li>Light-weight, minimum-viable interface</li>
+              <li>Utilizes OS/infra-level features</li>
+              <li>Facilitates reproducibility</li>
+              <li style="list-style: none;">&nbsp;</li>
+              <li style="list-style: none;">&nbsp;</li>
+              <li style="list-style: none;">&nbsp;</li>
+            </ul>
+          </div>
+          <div class="right-column">
+            <img src="./images/curl.png" style="max-height: 300px" />
+          </div>
+          <aside class="notes">
+            - While GUI is good for end users, they're counter-productive for coders, testers and devops engineers.<br /><br />
+            - You may ask, but can't this also get solved by logs and data dumps?<br />
+            - The answer is yes, but how much time would you spend reconstructing from those lossy data?<br />
+            - CLI allows you to dump data as well as the invocation
+          </aside>
+        </section>
+        <section>
+          <h2>Why CLI?</h2>
+          <div class="left-column" style="font-size: 80%">
+            <ul>
+              <li>Light-weight, minimum-viable interface</li>
+              <li>Utilizes OS/infra-level features</li>
+              <li>Facilitates reproducibility</li>
+              <li>Allows rule enforcements</li>
+              <li style="list-style: none;">&nbsp;</li>
+              <li style="list-style: none;">&nbsp;</li>
+            </ul>
+          </div>
+          <div class="right-column">
+            <pre><code class="lang-yaml">
+  defp do_set_config(key, value) do
+    key
+    |> Config.get_setting()
+    |> case do
+      ^value -> {:unchanged, value}
+      _ -> MySchema.do_update(key, value)
+    end
+  end
+            </code></pre>
+          </div>
+        </section>
+        <section>
+          <h2>Why CLI?</h2>
+          <div class="left-column" style="font-size: 80%">
+            <ul>
+              <li>Light-weight, minimum-viable interface</li>
+              <li>Utilizes OS/infra-level features</li>
+              <li>Facilitates reproducibility</li>
+              <li>Allows rule enforcements</li>
+              <li>Increases composability</li>
+              <li style="list-style: none;">&nbsp;</li>
+            </ul>
+          </div>
+          <div class="right-column">
+            <pre><code class="lang-shell">
+  my_app balance "bal123456" | jq
+            </code></pre>
+            <img src="./images/jq.png" style="max-width: 300px; text-align: left;" />
+          </div>
+          <aside class="notes">
+            My app only needs to produce a json text. I, as a user can choose however way to deal with the data.
+            In this case I use `jq` my favorite formatter that is composable through my pipe-compatible app.
+          </aside>
+        </section>
+        <section>
+          <h2>Why CLI?</h2>
+          <div class="left-column" style="font-size: 80%">
+            <ul>
+              <li>Light-weight, minimum-viable interface</li>
+              <li>Utilizes OS/infra-level features</li>
+              <li>Facilitates reproducibility</li>
+              <li>Allows rule enforcements</li>
+              <li>Increases composability</li>
+              <li>Enables automation</li>
+            </ul>
+          </div>
+          <div class="right-column">
+            <pre><code class="lang-yaml">
+  deploy:
+    steps:
+      - checkout
+      - run: my_app conf_secret "$SECRET"
+      - run:
+          command: sh .circleci/ci_slack.sh failure
+          when: on_fail
+            </code></pre>
+          </div>
+          <aside class="notes">
+
+          </aside>
+        </section>
+
+        <!--
+          DEVELOPER EXPERIENCE
+        -->
+        <section>
+          <ol>
+            <li>Why CLI?</li>
+            <li class="text-bold">Developer Experience (DX) in CLIs</li>
+            <li>Elixir core features for CLI apps</li>
+            <li>Lessons learnt</li>
+          </ol>
+        </section>
+        <section>
+          <p>Delivering robust functionality that is stable, speedy, and visually intuitive.</p>
+          <small>&hyphen; Justin Baker</small>
+        </section>
+        <section>
+          <img src="./images/justin-baker-dx-pyramid.jpg" style="max-height: 400px; border: 0;" />
+          <small><a href="https://hackernoon.com/developer-experience-dx-devs-are-people-too-6590d6577afe">Developer Experience (DX) — Devs Are People Too</a> (Justin Baker, 2017)</small>
+          <aside class="notes">
+            - Hopefully you agree that CLI has a place in your application
+            - Although I don't agree with the spectrum being most important to least important
+            - You might notice that Elixir fit in these principles as well. While with Elixir we work our backend to fit these principles, there's no reason we shouldn't apply this to our interfaces.
+          </aside>
+        </section>
+
+        <!--
+          ELIXIR CORE FEATURES
+        -->
+        <section>
+          <ol>
+            <li>Why CLI?</li>
+            <li>Developer Experience (DX) in CLIs</li>
+            <li class="text-bold">Elixir core features for CLI apps</li>
+            <li>Lessons learnt</li>
+          </ol>
+        </section>
+        <section>
+          <h3>Write & read to IO</h3>
+          <div class="left-column">
+            <p style="text-align: center;"><code>IO.puts/2</code>, <code>IO.write/2</code></p>
+            <pre><code>
+  IO.puts("Hello World!")
+  #=> Hello World!
+
+  IO.write("Hello World!")
+  #=> Hello World!
+            </code></pre>
+          </div>
+          <div class="right-column">
+            <p style="text-align: center;"><code>IO.gets/2</code></p>
+            <pre><code>
+  "Hello, " &lt;&gt; IO.gets("Name?\n")
+  #=> Name?
+  # Enters John Doe
+  #=> Hello, John Doe
+            </code></pre>
+          </div>
+        </section>
+        <section>
+          <h3>Colors with <code>IO.ANSI</code></h3>
+          <pre><code>
+  defmodule EWallet.CLI do
+    def info(message), do: [:normal, message] |> IO.ANSI.format() |> IO.puts()
+    def debug(message), do: [:faint, message] |> IO.ANSI.format() |> IO.puts()
+    def success(message), do: [:green, message] |> IO.ANSI.format() |> IO.puts()
+    def warn(message), do: [:yellow, message] |> IO.ANSI.format() |> IO.puts()
+
+    def error(message) do
+      formatted = IO.ANSI.format([:red, message])
+      IO.puts(:stderr, formatted)
+    end
+  end
+
+  CLI.info("This is informational")
+  CLI.error("Something went wrong")
+          </code></pre>
+        </section>
+        <section>
+          <h3><code>OptionParser</code></h3>
+          <p style="font-size: 70%">How would you parse <code>my_app --help --unsupported some_args</code>?</p>
+          <div class="fragment">
+            <code>OptionParser.parse/2</code>
+            <pre><code class="lang-elixir">
+    OptionParser.parse(argv(), options()) :: {parsed(), argv(), errors()}
+            </code></pre>
+            <pre><code class="lang-elixir">
+    iex> OptionParser.parse(["--help --unsupported some_args"], strict: [help: :boolean])
+    {[help: true], ["some_args"], [{"--unsupported", nil}]}
+            </code></pre>
+          </div>
+          <aside class="notes">
+            Often times I come across attempts to parse options by manually matching for strings.
+            This should be avoided. Elixir comes with OptionParser which is very safe to use.<br /><br />
+            Even if you don't build CLIs, OptionParser will be a fun read on user input handling.
+          </aside>
+        </section>
+        <section>
+          <video autoplay loop muted>
+            <source src="./images/cli.mov" type="video/mp4">
+          </video>
+          <aside class="notes">
+            All of this is done using only built-in Elixir core modules. Mainly IO.puts, IO.gets, and OptionParser.
+            And with these, we are able to let adopters setup their own system using our CLIs without our intervention.
+          </aside>
+        </section>
+
+        <!--
+          LESSONS LEARNT
+        -->
+        <section>
+          <ol>
+            <li>Why CLI?</li>
+            <li>Developer Experience (DX) in CLIs</li>
+            <li>Elixir core features for CLI apps</li>
+            <li class="text-bold">Lessons learnt</li>
+          </ol>
+        </section>
+        <section>
+          <h3><code>Custom release commands</code></h3>
+          <div class="fragment">
+            <p><small>rel/config.exs</small></p>
+            <pre><code class="lang-elixir">
+  release :my_app do
+    # ...
+    set commands: [
+      save_secret: "rel/commands/save_secret.sh"
+    ]
+  end
+            </code></pre>
+          </div>
+          <div class="fragment">
+            <p><small>rel/commands/save_secret.sh</small></p>
+            <pre><code class="lang-elixir">
+  #!/bin/sh
+  # Same as: mix save_secret "foo" "bar"
+  release_ctl eval --mfa "Mix.Tasks.SaveSecret.run/1" --argv -- "$@"
+            </code></pre>
+          </div>
+          <p class="fragment" style="font-size: 70%">Run with <code>bin/my_app save_secret "foo" "bar"</code></p>
+        </section>
+        <section>
+          <h3>Don't invent a new language</h3>
+          <ul>
+            <li>Usign unfamiliar terms mean learning curve and confuses users</li>
+            <li>When in doubt, consult <code>mix help</code>.</li>
+            <li>GNU Coding Standard's Table of Long Options (<a href="https://www.gnu.org/prep/standards/html_node/Option-Table.html">Link</a>)</li>
+          </ul>
+        </section>
+        <section>
+          <h3>stdout vs. stderror</h3>
+          <pre><code class="lang-shell">
+  IO.puts(device \\ :stdio, item)
+          </code></pre>
+          <pre><code class="lang-shell">
+  mix run -e 'IO.puts("info"); IO.puts(:stderr, "error")' 1>/dev/null
+  # error
+          </code></pre>
+          <ul>
+            <li>Customizable logging</li>
+            <li>More efficient monitoring and diagnostics</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Use options, not <code>IO.gets/2</code></h3>
+          <ul>
+            <li>CLI interactiveness is about returning promptly</li>
+            <li>Input prompts prevent automation</li>
+            <li>Use options for inputs, return error when missing</li>
+            <li>Supports `-y`, `--yes`, `--assume-yes` to bypass all confirmations</li>
+          </ul>
+          <pre><code class="lang-elixir">
+  def assume_yes?(args), do: args in ["-y", "--yes", "--assume-yes"]
+          </code></pre>
+        </section>
+        <section>
+          <h3>Exit codes</h3>
+          <table>
+            <thead>
+              <th>Code</th>
+              <th>Meaning</th>
+            </thead>
+            <tbody>
+              <tr><td>0</td><td>Success</td></tr>
+              <tr><td>1</td><td>Catchall for general errors</td></tr>
+              <tr><td>...</td><td>...</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size: 70%"><code>System.stop/1</code> and <code>System.halt/1:</code></p>
+          <pre><code class="lang-elixir">
+  System.stop(0) # Gracefully shuts down with exit status 0 (success)
+  System.halt(1) # Forceful immediate halt with exit status 1 (error)
+          </code></pre>
+          <p style="font-size: 70%">See: <a href="http://tldp.org/LDP/abs/html/exitcodes.html">Exit Codes With Special Meanings</a></p>
+          <aside class="notes">
+            Using the right exit code allows devops and other software to communiate reliably with your software
+            without having to resort to flaky string matching, etc.
+          </aside>
+        </section>
+
+        <!--
+          WRAP UP
+        -->
+        <section>
+          <ol>
+            <li>Why CLI?</li>
+            <li>Developer Experience (DX) in CLIs</li>
+            <li>Elixir core features for CLI apps</li>
+            <li>Lessons learnt</li>
+          </ol>
+        </section>
+
+        <!--
+          FURTHER READINGS
+        -->
+        <section>
+          <h2>Further readings</h2>
+          <ul style="font-size: 60%;">
+            <li>Vitaly Tatarintsev's Writing a command line app in Elixir (<a href="https://whatdidilearn.info/2017/12/10/writing-command-line-app-in-elixir.html">Link</a>)</li>
+            <li>Dennis Beatty's Cool CLIs in Elixir (<a href="https://dennisbeatty.com/2019/01/09/cool-clis-in-elixir-with-io-write-2.html">Part 1</a>, <a href="https://dennisbeatty.com/2019/03/12/cool-clis-in-elixir-part-2-with-io-ansi.html">Part 2</a>)</li>
+            <li>Unix Interface Design Patterns (<a href="http://catb.org/esr/writings/taoup/html/ch11s06.html">Link</a>)</li>
+          </ul>
+        </section>
+        <section>
+          <h2 style="margin-top: 2rem;">Let's talk more</h4>
+          <div class="left-column" style="text-align: center;">
+            <img src="./images/hello-tardigrade.jpg" style="width: 40%; display: block; margin: auto;" />
+            <img src="./images/omisego.svg" style="background: #fff; width: 40%; display: block; margin: 2rem auto;" />
+          </div>
+          <div class="right-column" style="text-align: left;">
+            <ul style="font-size: 60%;">
+              <li><a href="https://twitter.com/unnawut">twitter.com/unnawut</a></li>
+              <li><a href="https://omisego.network">omisego.network</a></li>
+              <li><a href="https://github.com/omisego/ewallet">omisego/ewallet</a></li>
+              <li><a href="https://github.com/unnawut/licensir">unnawut/licensir</a></li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        dependencies: [
+          { src: 'plugin/markdown/marked.js' },
+          { src: 'plugin/markdown/markdown.js' },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/highlight/highlight.pack.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        ],
+        history: true,
+        transition: 'fade'
+      });
+    </script>
+  </body>
+</html>

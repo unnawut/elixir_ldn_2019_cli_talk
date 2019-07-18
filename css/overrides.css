@@ -1,0 +1,39 @@
+.reveal section.credits img {
+  width: 15%;
+  background: none;
+  border: none;
+  margin: 1rem;
+}
+
+.reveal .left-column {
+  left:-8.33%;
+  text-align: left;
+  float: left;
+  width:50%;
+  z-index:-10;
+}
+
+.reveal .right-column {
+  left:31.25%;
+  top: 75px;
+  float: right;
+  text-align: right;
+  z-index:-10;
+  width:50%;
+}
+
+.reveal ol, .reveal ul {
+  line-height: 1.5
+}
+
+.reveal .text-bold {
+  font-weight: bold;
+}
+
+.reveal .text-blue {
+  color: #1b91ff;
+}
+
+.reveal .text-red {
+  color: #ff2c2d;
+}
